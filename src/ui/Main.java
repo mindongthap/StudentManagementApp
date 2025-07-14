@@ -1,83 +1,57 @@
 package ui;
 
-import model.Student;
-import service.StudentService;
 import java.util.Scanner;
-import java.util.ArrayList;
-
+import service.StudentService;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
         StudentService service = new StudentService();
-        int choice;
+        runMenu(service);
+    }
 
-        do {
-            System.out.println("\n===== MENU =====");
-            System.out.println("1. Add student");
-            System.out.println("2. Delete student");
-            System.out.println("3. Search by name");
-            System.out.println("4. Display all");
-            System.out.println("0. Exit");
+    private static void runMenu(StudentService service) {
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            showMenu();
             System.out.print("Enter choice: ");
-            choice = Integer.parseInt(sc.nextLine());
+            int choice;
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
 
             switch (choice) {
                 case 1:
-                    try {
-                        System.out.print("Enter ID: ");
-                        int id = Integer.parseInt(sc.nextLine());
-                        System.out.print("Enter full name: ");
-                        String name = sc.nextLine();
-                        System.out.print("Enter GPA: ");
-                        double gpa = Double.parseDouble(sc.nextLine());
-
-                        Student s = new Student(id, name, gpa);
-                        if (service.addStudent(s)) {
-                            System.out.println("Student added.");
-                        } else {
-                            System.out.println("Invalid input or duplicate ID.");
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Error: Please enter valid input.");
-                    }
+                    service.addStudent();
                     break;
-
                 case 2:
-                    System.out.print("Enter ID to delete: ");
-                    int delId = Integer.parseInt(sc.nextLine());
-                    if (service.deleteStudent(delId)) {
-                        System.out.println("Student deleted.");
-                    } else {
-                        System.out.println("Student not found.");
-                    }
+                    service.deleteStudent();
                     break;
-
                 case 3:
-                    System.out.print("Enter name to search: ");
-                    String searchName = sc.nextLine();
-                    ArrayList<Student> result = service.searchByName(searchName);
-
-                    if (result.isEmpty()) {
-                        System.out.println("No student found.");
-                    } else {
-                        for (Student s : result) {
-                            System.out.println(s);
-                        }
-                    }
+                    service.searchStudent();
                     break;
-
                 case 4:
                     service.displayAll();
                     break;
-
                 case 0:
-                    System.out.println("Goodbye!");
-                    break;
-
+                    System.out.println("Exiting program...");
+                    return;
                 default:
-                    System.out.println("Invalid choice.");
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
             }
-        } while (choice != 0);
+        }
+    }
+
+    private static void showMenu() {
+        System.out.println("===== MENU =====");
+        System.out.println("1. Add student");
+        System.out.println("2. Delete student");
+        System.out.println("3. Search by name");
+        System.out.println("4. Display all");
+        System.out.println("0. Exit");
     }
 }
